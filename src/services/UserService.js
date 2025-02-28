@@ -15,11 +15,11 @@ class UserService {
    */
 
   async registerUser(user) {
-    const { nome, email, senha, data_nascimento, tipo } = user;
-    console.log("Dados recebidos no serviço:", { nome, email, senha, data_nascimento, tipo });
+    const { nome, email, senha, data_nascimento, tipo, cpf, cidade, estado, cro} = user;
+    console.log("Dados recebidos no serviço:", { nome, email, senha, data_nascimento, tipo, cpf, cidade, estado, cro });
 
     // Validação dos dados
-    if (!nome || !email || !senha || !data_nascimento || !tipo) {
+    if (!nome || !email || !senha || !data_nascimento || !tipo || !cpf || !cidade || !estado) {
       throw new Error('Todos os campos são obrigatórios.');
     }
 
@@ -28,7 +28,7 @@ class UserService {
     }
 
     // Envia os dados validados
-    return await this.userRepository.createUser({ nome, email, senha: md5(senha), data_nascimento, tipo });
+    return await this.userRepository.createUser({ nome, email, senha: md5(senha), data_nascimento, tipo, cpf, cidade, estado, cro});
   }
 
   async updateUser(id, updates) {
