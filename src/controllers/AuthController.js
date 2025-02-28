@@ -20,9 +20,14 @@ router.post('/', async (req, res) => {
           tipo,
         });
       } catch (error) {
+        if (error.message === 'Email e senha são obrigatórios.' || 
+            error.message === 'Credenciais inválidas.') {
+            return res.status(400).json({ message: error.message });
+        }
+
         console.error('Erro no login:', error.message);
         return res.status(500).json({ message: 'Erro interno do servidor' });
-      }
+    }
 });
 
 module.exports = router; 
