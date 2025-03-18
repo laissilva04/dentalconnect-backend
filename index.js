@@ -19,10 +19,12 @@ app.use(cors({
 // Importação dos controllers
 const userController = require('./src/controllers/UserController')
 const authController = require('./src/controllers/AuthController')
+const localController = require('./src/controllers/LocalController')
 
 // Conexão das rotas
 app.use('/api/users', userController)
 app.use('/api/login', authController)
+app.use('/api/locals', localController)
 
 // Rota principal
 app.get("/", (req, res) => {
