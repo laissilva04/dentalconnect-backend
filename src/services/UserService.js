@@ -27,6 +27,11 @@ class UserService {
       throw new Error('Tipo de usuário inválido. Deve ser "paciente" ou "dentista".');
     }
 
+    const existingUser = await this.userRepository.findByEmail(email);
+    if (existingUser) {
+      throw new Error('Usuário já cadastrado com este e-mail.');
+    }
+
     // Envia os dados validados
     return await this.userRepository.createUser({ nome, email, senha: md5(senha), data_nascimento, tipo, cpf, cidade, estado, cro});
   }
