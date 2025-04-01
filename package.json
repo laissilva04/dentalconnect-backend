@@ -1,0 +1,21 @@
+{
+  "name": "dentalconnect-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.x.x",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.x.x",
+    "dotenv": "^16.4.7",
+    "express": "^4.x.x",
+    "jsonwebtoken": "^9.0.2",
+    "md5": "^2.3.0"
+  }
+}
