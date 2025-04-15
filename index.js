@@ -20,11 +20,13 @@ app.use(cors({
 const userController = require('./src/controllers/UserController')
 const authController = require('./src/controllers/AuthController')
 const localController = require('./src/controllers/LocalController')
+const dentistController = require('./src/controllers/DentistController')
 
 // Conexão das rotas
 app.use('/api/users', userController)
 app.use('/api/login', authController)
 app.use('/api/locals', localController)
+app.use('/api/dentists', dentistController)
 
 // Rota principal
 app.get("/", (req, res) => {
