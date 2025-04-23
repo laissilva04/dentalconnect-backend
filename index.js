@@ -21,12 +21,14 @@ const userController = require('./src/controllers/UserController')
 const authController = require('./src/controllers/AuthController')
 const localController = require('./src/controllers/LocalController')
 const dentistController = require('./src/controllers/DentistController')
+const consultationController = require('./src/controllers/ConsultationController')
 
 // Conexão das rotas
 app.use('/api/users', userController)
 app.use('/api/login', authController)
 app.use('/api/locals', localController)
 app.use('/api/dentists', dentistController)
+app.use('/api/consultation', consultationController)
 
 // Rota principal
 app.get("/", (req, res) => {
@@ -43,5 +45,3 @@ const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Servidor na porta http://localhost:${PORT}`);
 });
-
-/* teste push */
