@@ -22,6 +22,7 @@ const authController = require('./src/controllers/AuthController')
 const localController = require('./src/controllers/LocalController')
 const dentistController = require('./src/controllers/DentistController')
 const consultationController = require('./src/controllers/ConsultationController')
+const servicesController = require('./src/controllers/ServicesController')
 
 // Conexão das rotas
 app.use('/api/users', userController)
@@ -29,6 +30,7 @@ app.use('/api/login', authController)
 app.use('/api/locals', localController)
 app.use('/api/dentists', dentistController)
 app.use('/api/consultation', consultationController)
+app.use('/api/services', servicesController)
 
 // Rota principal
 app.get("/", (req, res) => {
