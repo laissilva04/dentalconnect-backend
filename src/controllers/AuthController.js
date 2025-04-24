@@ -11,13 +11,14 @@ router.post('/', async (req, res) => {
     const { email, senha } = req.body;
     
     try {
-        const { token, user, tipo } = await authService.loginUser({ email, senha });
+        const { token, user, tipo, nome } = await authService.loginUser({ email, senha });
     
         return res.status(200).json({
           message: 'Login realizado com sucesso!',
           token,
           user,
           tipo,
+          nome,
         });
       } catch (error) {
         if (error.message === 'Email e senha são obrigatórios.' || 

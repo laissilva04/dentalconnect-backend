@@ -30,7 +30,8 @@ class AuthService{
         return {
             token,
 	        user: user.id,
-	        tipo: user.tipo
+	        tipo: user.tipo,
+            nome:user.nome,
         }
     }
 
