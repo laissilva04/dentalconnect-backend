@@ -17,6 +17,8 @@ class AuthService{
 
         const user = await this.userRepository.findByEmail(email);
 
+        console.log("Avatar do usuário:", user.avatar);
+
         if (!user) {
             throw new Error('Credenciais inválidas.');
         }
@@ -31,7 +33,8 @@ class AuthService{
             token,
 	        user: user.id,
 	        tipo: user.tipo,
-            nome:user.nome,
+            nome: user.nome,
+            avatar: user.avatar
         }
     }
 
