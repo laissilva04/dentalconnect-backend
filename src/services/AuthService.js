@@ -27,11 +27,15 @@ class AuthService{
 
         // Gerar um token JWT
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        console.log("Avatar do usuário:", user.avatar);
+        
         return {
             token,
 	        user: user.id,
 	        tipo: user.tipo,
-            nome:user.nome,
+            nome: user.nome,
+            avatar: user.avatar
         }
     }
 
