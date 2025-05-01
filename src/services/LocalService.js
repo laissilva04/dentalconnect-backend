@@ -72,6 +72,12 @@ class LocalService {
 
     return await this.localRepository.findById(id);
   }
+
+  // Realiza Busca avançada
+  async buscarLocaisPorFiltros(filtros) {
+    return this.localRepository.buscarLocaisPorFiltros(filtros);
+  }
+  
 }
 
 module.exports = LocalService;

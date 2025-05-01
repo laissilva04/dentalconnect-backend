@@ -19,15 +19,15 @@ class ConsultationService {
    * @param {Object} consultation
    */
   async createConsultation(consultation) {
-    const { data, horario, paciente, dentista, local, status } = consultation;
+    const { data, horario, paciente, dentista, local, status, servico } = consultation;
 
     // Validação dos dados
-    if (!data || !horario || !paciente || !dentista || !local || !status) {
+    if (!data || !horario || !paciente || !dentista || !local || !status || !servico) {
       throw new Error('Todos os campos são obrigatórios.');
     }
 
     // Envia os dados validados para o repositório
-    return await this.consultationRepository.createConsultation({ data, horario, paciente, dentista, local, status });
+    return await this.consultationRepository.createConsultation({ data, horario, paciente, dentista, local, status, servico });
   }
 
   /**
@@ -41,8 +41,8 @@ class ConsultationService {
     }
 
     // Validação dos dados
-    const { data, horario, paciente, dentista, local, status } = updates;
-    if (!data || !horario || !paciente || !dentista || !local || !status) {
+    const { data, horario, paciente, dentista, local, status, servico } = updates;
+    if (!data || !horario || !paciente || !dentista || !local || !status ||!servico) {
       throw new Error('Pelo menos um campo deve ser fornecido para atualização.');
     }
 

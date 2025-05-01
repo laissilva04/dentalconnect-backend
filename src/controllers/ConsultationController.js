@@ -16,17 +16,17 @@ router.get('/', async (req, res) => {
 // Rota para criar uma nova consulta
 router.post('/', async (req, res) => {
   console.log('Dados recebidos na rota:', req.body); // Log dos dados recebidos
-  const { data, horario, paciente, dentista, local, status } = req.body;
+  const { data, horario, paciente, dentista, local, status,servico } = req.body;
 
   // Validação dos dados recebidos
-  if (!data || !horario || !paciente || !dentista || !local || !status) {
-    console.error('Dados inválidos:', { data, horario, paciente, dentista, local, status });
+  if (!data || !horario || !paciente || !dentista || !local || !status || !servico) {
+    console.error('Dados inválidos:', { data, horario, paciente, dentista, local, status, servico});
     return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
   }
 
   try {
     // Envia os dados para o serviço
-    const newConsultation = await consultationService.createConsultation({ data, horario, paciente, dentista, local, status });
+    const newConsultation = await consultationService.createConsultation({ data, horario, paciente, dentista, local, status, servico });
     res.status(201).json({ message: 'Consulta criada com sucesso!', newConsultation });
   } catch (err) {
     console.error('Erro na criação da consulta:', err.message);
