@@ -88,6 +88,74 @@ class LocalRepository {
 
     return data;
   }
+
+  /**
+   * Busca locais com filtros avançados por estado, cidade e serviço.
+   * @param {Object} filtros
+   * @param {string} [filtros.estado]
+   * @param {string} [filtros.cidade]
+   * @param {number} [filtros.servicoId]
+   * @returns {Promise<Array>}
+   */
+
+  
+  async buscarLocaisPorFiltros({ estado, cidade, servicoId }) {
+    try {
+      let query = supabase
+        .from('local')
+        .select(`
+          id,
+          nome,
+          endereco,
+          numero,
+          cidade,
+          estado
+        `);
+
+      if (estado) {
+        query = query.eq('estado', estado);
+      }
+      
+      if (cidade) {
+        query = query.eq('cidade', cidade);
+      }
+
+      if (servicoId) {
+        const { data: consultasComServico, error: erroConsultas } = await supabase
+          .from('consulta')
+          .select('local')
+          .eq('servico', servicoId);
+        
+        if (erroConsultas) {
+          console.error('Erro ao buscar consultas por serviço:', erroConsultas.message);
+          throw new Error(erroConsultas.message);
+        }
+        
+        const idsLocais = consultasComServico.map(consulta => consulta.local);
+        
+        
+        if (idsLocais.length > 0) {
+          query = query.in('id', idsLocais);
+        } else {
+          return [];
+        }
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Erro ao buscar locais com filtros:', error.message);
+        throw new Error(error.message);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar locais com filtros:', error.message);
+      throw error;
+    }
+  }
+
+
 }
 
 module.exports = LocalRepository;

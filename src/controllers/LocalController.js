@@ -54,17 +54,47 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+// Rota para busca avançada
+router.get('/buscaavancada', async (req, res) => {
+  console.log('LOG /api/locals/buscaavancada:', req.query);
+  try {
+    const { estado, cidade, servico } = req.query;
+    const filtros = {
+      estado,
+      cidade,
+      servico: servico ? Number(servico) : undefined 
+    };
+    const locais = await localService.buscarLocaisPorFiltros(filtros);
+    res.json(locais);
+  } catch (err) {
+    console.error('Erro na rota /buscaavancada:', err);
+    res.status(500).json({ error: 'Erro ao realizar busca avançada: ' + err.message });
+  }
+});
+
+
 // Rota para buscar um local pelo ID
 router.get('/:id', async (req, res) => {
   try {
-    const local = await localService.findLocalById(req.params.id);
+    const localId = req.params.id;
+      
+    if (isNaN(parseInt(localId))) {
+    return res.status(400).json({ error: "ID inválido fornecido na URL." }); 
+  }
+    const local = await localService.findLocalById(localId);
+    
     if (!local) {
       return res.status(404).json({ error: 'Local não encontrado.' });
     }
     res.status(200).json(local);
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao buscar local: ' + err.message });
+    console.error(`Erro na rota /:id com id=${req.params.id}:`, err);
+    res.status(500).json({ error: 'Erro ao buscar local por ID: ' + err.message });
   }
 });
+
+
+
 
 module.exports = router;
