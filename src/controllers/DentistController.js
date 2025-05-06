@@ -1,3 +1,4 @@
+
 const express = require('express');
 const DentistService = require('../services/DentistService');
 const router = express.Router();
@@ -11,8 +12,8 @@ router.get('/', authentication, async (req, res) => {
     res.status(200).json(dentists);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
+  } 
+}); 
 
 // Rota para criar um novo dentista
 router.post('/', authentication, async (req, res) => {
@@ -70,6 +71,7 @@ router.delete('/:id', authentication, async (req, res) => {
 
 // Rota para buscar dentista pelo ID do usuário
 router.get('/usuario/:id_usuario', authentication, async (req, res) => {
+  
   try {
     const dentist = await dentistService.findDentistByUserId(req.params.id_usuario);
     if (!dentist) {
@@ -81,17 +83,54 @@ router.get('/usuario/:id_usuario', authentication, async (req, res) => {
   }
 });
 
-// Rota para buscar dentista pelo número do CRO
-router.get('/cro/:numero_cro', authentication, async (req, res) => {
-  try {
-    const dentist = await dentistService.findDentistByCro(req.params.numero_cro);
-    if (!dentist) {
-      return res.status(404).json({ error: 'Dentista não encontrado com este CRO.' });
+  // Rota para buscar dentista pelo número do CRO
+  router.get('/cro/:numero_cro', authentication, async (req, res) => {
+    
+    try {
+      const dentist = await dentistService.findDentistByCro(req.params.numero_cro);
+      if (!dentist) {
+        return res.status(404).json({ error: 'Dentista não encontrado com este CRO.' });
+      }
+      res.status(200).json(dentist);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-    res.status(200).json(dentist);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  });
+
+
+  // Rota para listar todos os dentistas com informações de usuário
+  // Aceita um query parameter "nome" para filtrar por nome do usuário
+  router.get("/nome", authentication, async (req, res) => {
+    
+    try {
+      const { nome } = req.query; 
+      console.log("DentistController - Rota GET / - Parâmetro 'nome' recebido da query string:", nome);
+      
+      const dentistas = await dentistService.listDentistasComUsuario(nome);
+      console.log("DentistController - Rota GET / - Dentistas retornados pelo serviço:", dentistas ? dentistas.length : 0);
+      
+      res.status(200).json(dentistas);
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao listar dentistas: " + err.message });
+    }
+  });
+
+  // Rota para buscar um dentista pelo ID com informações de usuário
+  router.get("/:id", authentication, async (req, res) => {
+    const dentistaId = req.params.id;
+    try {
+      const dentista = await dentistService.findDentistaByIdComUsuario(dentistaId);
+      
+      if (!dentista) {
+        return res.status(404).json({ error: "Dentista não encontrado." });
+      }
+      res.status(200).json(dentista);
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao buscar dentista: " + err.message });
+    }
+  });
+
+
+
 
 module.exports = router;

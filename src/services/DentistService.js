@@ -1,3 +1,4 @@
+
 const DentistRepository = require('../repositories/DentistRepository');
 
 class DentistService {
@@ -116,6 +117,46 @@ class DentistService {
     }
 
     return await this.dentistRepository.findByCroNumber(numero_cro);
+  }
+
+
+     /**
+     * Retorna todos os dentistas cadastrados com as informações do usuário associado.
+     * Se um nome for fornecido, filtra os resultados pelo nome do usuário.
+     * @param {string} [nome] - Nome opcional para filtrar os dentistas.
+     * @returns {Promise<Array<Object>>}
+     */
+     async listDentistasComUsuario(nome) {
+      console.log("DentistService - listDentistasComUsuario - Parâmetro 'nome' recebido:", nome);
+      try {
+          const dentistas = await this.dentistRepository.findAllWithUser(nome);
+          console.log("DentistService - listDentistasComUsuario - Dentistas retornados do repositório:", dentistas ? dentistas.length : 0);
+          return dentistas;
+      } catch (error) {
+          console.error("DentistService - listDentistasComUsuario - Erro ao chamar o repositório:", error.message);
+          throw error; 
+      }
+  }
+
+  /**
+   * Busca um dentista pelo ID com as informações do usuário associado.
+   * @param {number} id O ID do dentista.
+   * @returns {Promise<Object|null>}
+   */
+  async findDentistaByIdComUsuario(id) {
+      console.log("DentistService - findDentistaByIdComUsuario - ID recebido:", id);
+      if (!id) {
+          console.error("DentistService - findDentistaByIdComUsuario - O ID do dentista é obrigatório.");
+          throw new Error("O ID do dentista é obrigatório.");
+      }
+      try {
+          const dentista = await this.dentistRepository.findByIdWithUser(id);
+          console.log("DentistService - findDentistaByIdComUsuario - Dentista retornado do repositório para ID:", id, dentista ? "Encontrado" : "Não encontrado");
+          return dentista;
+      } catch (error) {
+          console.error("DentistService - findDentistaByIdComUsuario - Erro ao chamar o repositório para ID:", id, error.message);
+          throw error; 
+      }
   }
 }
 
