@@ -105,6 +105,120 @@ class DentistRepository {
 
         return data;
     }
-};
+
+
+    /**
+     * Retorna todos os dentistas com informações do usuário associado.
+     * Se um nome for fornecido, filtra os resultados pelo nome do usuário (case-insensitive).
+     * @param {string} [nome] - Nome opcional para filtrar os dentistas.
+     * @returns {Promise<Array<Object>>}
+     */
+    async findAllWithUser(nome) {
+        console.log("DentistRepository - findAllWithUser - Parâmetro 'nome' recebido:", nome);
+        let query = supabase
+            .from("dentista")
+            .select(`
+                id,
+                created_at,
+                numero_cro,
+                tipo,
+                id_usuario:usuario, 
+                usuario:user!inner (
+                    id,
+                    nome,
+                    senha, 
+                    data_nascimento,
+                    tipo,
+                    email,
+                    cpf,
+                    cidade,
+                    estado,
+                    cro,
+                    created_at,
+                    avatar
+                )
+            `);
+
+        if (nome && nome.trim() !== "") {
+            console.log("DentistRepository - findAllWithUser - Aplicando filtro ilike para:", nome);
+            query = query.ilike("user.nome", `%${nome.trim()}%`);
+        } else {
+            console.log("DentistRepository - findAllWithUser - Nenhum nome fornecido ou nome vazio, não aplicando filtro ilike.");
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error("DentistRepository - findAllWithUser - Erro ao buscar dentistas com usuários:", error.message, error.details);
+            throw new Error(error.message);
+        }
+        
+        console.log("DentistRepository - findAllWithUser - Dados retornados pela consulta:", data ? data.length : 0, "registos");
+        return data.map(d => ({
+            id: d.id,
+            created_at: d.created_at,
+            id_usuario: d.id_usuario, 
+            numero_cro: d.numero_cro,
+            tipo: d.tipo, 
+            usuario: d.usuario 
+        }));
+    }
+
+    /**
+     * Busca um dentista pelo ID com informações do usuário associado.
+     * @param {number} id O ID do dentista.
+     * @returns {Promise<Object|null>}
+     */
+    async findByIdWithUser(id) {
+        console.log("DentistRepository - findByIdWithUser - ID recebido:", id);
+        const { data, error } = await supabase
+            .from("dentista")
+            .select(`
+                id,
+                created_at,
+                numero_cro,
+                tipo,
+                id_usuario:usuario,
+                usuario:user (
+                    id,
+                    nome,
+                    senha,
+                    data_nascimento,
+                    tipo,
+                    email,
+                    cpf,
+                    cidade,
+                    estado,
+                    cro,
+                    created_at,
+                    avatar
+                )
+            `)
+            .eq("id", id)
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") { // Código para "No rows found"
+                console.log("DentistRepository - findByIdWithUser - Dentista não encontrado para o ID:", id);
+                return null; 
+            }
+            console.error("DentistRepository - findByIdWithUser - Erro ao buscar dentista por ID com usuário:", error.message, error.details);
+            throw new Error(error.message);
+        }
+        
+        console.log("DentistRepository - findByIdWithUser - Dados retornados para o ID:", id, data ? "Encontrado" : "Não encontrado");
+        if (!data) return null;
+
+        return {
+            id: data.id,
+            created_at: data.created_at,
+            id_usuario: data.id_usuario,
+            numero_cro: data.numero_cro,
+            tipo: data.tipo,
+            usuario: data.usuario
+        };
+    }
+}
+
 
 module.exports = DentistRepository;
