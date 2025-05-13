@@ -122,7 +122,7 @@ class DentistRepository {
                 created_at,
                 numero_cro,
                 tipo,
-                id_usuario:usuario, 
+                id_usuario, 
                 usuario:user!inner (
                     id,
                     nome,
@@ -178,7 +178,7 @@ class DentistRepository {
                 created_at,
                 numero_cro,
                 tipo,
-                id_usuario:usuario,
+                id_usuario,
                 usuario:user (
                     id,
                     nome,
