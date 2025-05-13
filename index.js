@@ -26,6 +26,7 @@ const servicesController = require('./src/controllers/ServicesController')
 const mailRoutes = require('./src/routes/mail'); 
 const localServicosController = require('./src/controllers/LocalServicesController')
 const faleConoscoController = require('./src/controllers/FaleConoscoController');
+const dentistaServicoController = require('./src/controllers/DentistaServicoController');
 
 // Conexão das rotas
 app.use('/api/users', userController)
@@ -37,6 +38,7 @@ app.use('/api/services', servicesController)
 app.use('/api/mail', mailRoutes);
 app.use('/api/locals-services', localServicosController)
 app.use('/api/fale-conosco', faleConoscoController);
+app.use('/api/dentists-services', dentistaServicoController)
 
 // Rota principal
 app.get("/", (req, res) => {
