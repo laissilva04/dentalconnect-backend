@@ -3,8 +3,7 @@ class Dentist {
         this.id = id;
         this.created_at = created_at;
         this.id_usuario = id_usuario;
-        this.numero_cro = numero_cro;
-        this.usuario = usuario; 
+        this.numero_cro = numero_cro;   
     }
 }
 
