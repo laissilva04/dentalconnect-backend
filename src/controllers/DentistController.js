@@ -1,4 +1,3 @@
-
 const express = require('express');
 const DentistService = require('../services/DentistService');
 const router = express.Router();
@@ -70,8 +69,7 @@ router.delete('/:id', authentication, async (req, res) => {
 });
 
 // Rota para buscar dentista pelo ID do usuário
-router.get('/usuario/:id_usuario', authentication, async (req, res) => {
-  
+router.get('/usuario/:id_usuario', async (req, res) => {
   try {
     const dentist = await dentistService.findDentistByUserId(req.params.id_usuario);
     if (!dentist) {

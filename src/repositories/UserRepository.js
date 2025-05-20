@@ -13,6 +13,15 @@ const supabase = createClient(
         return data;
       }
 
+    async getUsersByType(tipo) {
+        const { data, error } = await supabase
+            .from('user')
+            .select('*')
+            .eq('tipo', tipo);
+        if (error) throw new Error(error.message);
+        return data;
+    }
+
         /**
      * Cria um novo usuário no banco de dados.
      * @param {Object} user
