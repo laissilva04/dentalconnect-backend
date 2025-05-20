@@ -9,6 +9,14 @@ class UserService {
   async listUsers() {
     return await this.userRepository.getAllUsers();
   }
+
+  async listUsersByType(tipo) {
+    if (!tipo) {
+      throw new Error('O tipo de usuário é obrigatório.');
+    }
+    return await this.userRepository.getUsersByType(tipo);
+  }
+
   /**
    * Registra um novo usuário.
    * @param {Object} user

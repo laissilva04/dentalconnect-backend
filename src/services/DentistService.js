@@ -1,5 +1,10 @@
-
 const DentistRepository = require('../repositories/DentistRepository');
+const { createClient } = require('@supabase/supabase-js');
+
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+);
 
 class DentistService {
   constructor() {
@@ -103,7 +108,45 @@ class DentistService {
       throw new Error('O ID do usuário é obrigatório.');
     }
 
-    return await this.dentistRepository.findByUserId(id_usuario);
+    const { data, error } = await supabase
+      .from("dentista")
+      .select(`
+        id,
+        created_at,
+        numero_cro,
+        tipo,
+        id_usuario,
+        usuario:users (
+          id,
+          nome,
+          senha,
+          data_nascimento,
+          tipo,
+          email,
+          cpf,
+          cidade,
+          estado,
+          cro,
+          created_at,
+          avatar
+        )
+      `)
+      .eq("id_usuario", id_usuario)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") return null;
+      throw new Error(error.message);
+    }
+
+    return {
+      id: data.id,
+      created_at: data.created_at,
+      id_usuario: data.id_usuario,
+      numero_cro: data.numero_cro,
+      tipo: data.tipo,
+      usuario: data.usuario
+    };
   }
 
   /**

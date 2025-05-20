@@ -6,10 +6,16 @@ const authentication  = require('../middleware/authentication.midle');
 
 
 // Rota para listar todos os usuários
-router.get('/', authentication, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const users = await userService.listUsers();
-    res.status(200).json(users);
+    const { tipo } = req.query;
+    if (tipo) {
+      const users = await userService.listUsersByType(tipo);
+      res.status(200).json(users);
+    } else {
+      const users = await userService.listUsers();
+      res.status(200).json(users);
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
