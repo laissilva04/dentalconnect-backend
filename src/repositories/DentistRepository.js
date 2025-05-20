@@ -8,9 +8,33 @@ const supabase = createClient(
 class DentistRepository {
 
     async getAllDentists() {
-        const { data, error } = await supabase.from('dentista').select('*');
+        const { data, error } = await supabase
+            .from('dentista')
+            .select(`
+                id,
+                created_at,
+                numero_cro,
+                tipo,
+                id_usuario,
+                usuario:user!inner (
+                    id,
+                    nome,
+                    email,
+                    avatar
+                )
+            `);
+
         if (error) throw new Error(error.message);
-        return data;
+        
+        return data.map(d => ({
+            id: d.id,
+            created_at: d.created_at,
+            numero_cro: d.numero_cro,
+            tipo: d.tipo,
+            nome: d.usuario.nome,
+            email: d.usuario.email,
+            avatar: d.usuario.avatar
+        }));
     }
 
     /**
@@ -217,6 +241,47 @@ class DentistRepository {
             tipo: data.tipo,
             usuario: data.usuario
         };
+    }
+
+    /**
+     * Busca dentistas que trabalham em um local específico
+     * @param {number} localId - ID do local
+     * @returns {Promise<Array<Object>>}
+     */
+    async findDentistsByLocal(localId) {
+        const { data, error } = await supabase
+            .from('dentista_local')
+            .select(`
+                id_dentista,
+                dentista!inner (
+                    id,
+                    numero_cro,
+                    tipo,
+                    id_usuario,
+                    usuario:user!inner (
+                        id,
+                        nome,
+                        email,
+                        avatar
+                    )
+                )
+            `)
+            .eq('id_local', localId);
+
+        if (error) {
+            console.error('Erro ao buscar dentistas por local:', error.message);
+            throw new Error(error.message);
+        }
+
+        // Transforma os dados para o formato esperado pelo frontend
+        return data.map(item => ({
+            id: item.dentista.id,
+            numero_cro: item.dentista.numero_cro,
+            tipo: item.dentista.tipo,
+            nome: item.dentista.usuario.nome,
+            email: item.dentista.usuario.email,
+            avatar: item.dentista.usuario.avatar
+        }));
     }
 }
 

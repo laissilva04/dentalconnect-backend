@@ -116,7 +116,7 @@ class DentistService {
         numero_cro,
         tipo,
         id_usuario,
-        usuario:users (
+        usuario:user (
           id,
           nome,
           senha,
@@ -200,6 +200,18 @@ class DentistService {
           console.error("DentistService - findDentistaByIdComUsuario - Erro ao chamar o repositório para ID:", id, error.message);
           throw error; 
       }
+  }
+
+  /**
+   * Busca dentistas que trabalham em um local específico
+   * @param {number} localId - ID do local
+   * @returns {Promise<Array<Object>>}
+   */
+  async findDentistsByLocal(localId) {
+    if (!localId) {
+      throw new Error('O ID do local é obrigatório.');
+    }
+    return await this.dentistRepository.findDentistsByLocal(localId);
   }
 }
 

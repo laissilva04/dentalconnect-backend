@@ -128,7 +128,20 @@ router.get('/usuario/:id_usuario', async (req, res) => {
     }
   });
 
+// Rota para buscar dentistas por local
+router.get('/local/:localId', authentication, async (req, res) => {
+  try {
+    const localId = parseInt(req.params.localId);
+    if (isNaN(localId)) {
+      return res.status(400).json({ error: 'ID do local inválido.' });
+    }
 
-
+    const dentists = await dentistService.findDentistsByLocal(localId);
+    res.status(200).json(dentists);
+  } catch (err) {
+    console.error('Erro ao buscar dentistas por local:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
