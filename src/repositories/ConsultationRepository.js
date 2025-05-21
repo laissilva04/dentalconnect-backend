@@ -8,7 +8,17 @@ const supabase = createClient(
 class ConsultationRepository {
 
     async getAllConsultation() {
-        const { data, error } = await supabase.from('consulta').select('*');
+        const { data, error } = await supabase
+            .from('consulta')
+            .select(`
+                *,
+                paciente:user!consulta_paciente_fkey (
+                    id,
+                    nome,
+                    email,
+                    avatar
+                )
+            `);
         if (error) throw new Error(error.message);
         return data;
     }
