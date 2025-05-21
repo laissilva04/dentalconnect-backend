@@ -34,10 +34,10 @@ class AuthService{
 	        user: user.id,
 	        tipo: user.tipo,
             nome: user.nome,
-            avatar: user.avatar
+            avatar: user.avatar,
+            email: user.email
         }
     }
-
 }
 
 module.exports = AuthService

@@ -52,7 +52,6 @@ const supabase = createClient(
       console.error('Erro ao buscar usuário por email:', error.message);
       throw new Error(error.message);
     }
-
     return data;
   }
 
