@@ -19,7 +19,8 @@ router.post('/', async (req, res) => {
           user,
           tipo,
           nome,
-          avatar
+          avatar,
+          email
         });
       } catch (error) {
         if (error.message === 'Email e senha são obrigatórios.' || 
