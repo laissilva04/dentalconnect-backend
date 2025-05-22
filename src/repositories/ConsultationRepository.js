@@ -24,6 +24,45 @@ class ConsultationRepository {
     }
 
     /**
+     * Busca consultas por paciente
+     * @param {string} pacienteId 
+     * @returns {Array<Object>}
+     */
+    async findByPaciente(pacienteId) {
+        if (!pacienteId) {
+            throw new Error('ID do paciente é obrigatório');
+        }
+
+        console.log('Buscando consultas para o paciente:', pacienteId);
+
+        try {
+            const { data, error } = await supabase
+                .from('consulta')
+                .select(`
+                    *,
+                    paciente:user!consulta_paciente_fkey (
+                        id,
+                        nome,
+                        email,
+                        avatar
+                    )
+                `)
+                .eq('paciente', pacienteId)
+                .order('data', { ascending: true });
+
+            if (error) {
+                console.error('Erro ao buscar consultas do paciente:', error.message);
+                throw new Error(error.message);
+            }
+
+            return data || [];
+        } catch (error) {
+            console.error('Erro ao buscar consultas:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Cria uma nova consulta no banco de dados
      * @param {Object} consultation 
      */
