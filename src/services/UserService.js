@@ -11,61 +11,54 @@ class UserService {
   }
 
   async listUsersByType(tipo) {
-    if (!tipo) {
-      throw new Error('O tipo de usuário é obrigatório.');
-    }
     return await this.userRepository.getUsersByType(tipo);
   }
 
   /**
    * Registra um novo usuário.
-   * @param {Object} user
+   * @param {Object} userData
    */
 
-  async registerUser(user) {
-    const { nome, email, senha, data_nascimento, tipo, cpf, cidade, estado, cro} = user;
-    console.log("Dados recebidos no serviço:", { nome, email, senha, data_nascimento, tipo, cpf, cidade, estado, cro });
-
-    // Validação dos dados
-    if (!nome || !email || !senha || !data_nascimento || !tipo || !cpf || !cidade || !estado) {
-      throw new Error('Todos os campos são obrigatórios.');
-    }
-
-    if (!['paciente', 'dentista'].includes(tipo)) {
-      throw new Error('Tipo de usuário inválido. Deve ser "paciente" ou "dentista".');
-    }
-
-    const existingUser = await this.userRepository.findByEmail(email);
+  async registerUser(userData) {
+    console.log("Dados recebidos no serviço:", userData);
+    
+    // Verificar se o email já está em uso
+    const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
-      throw new Error('Usuário já cadastrado com este e-mail.');
+      throw new Error('Email já cadastrado');
     }
 
-    // Envia os dados validados
-    return await this.userRepository.createUser({ nome, email, senha: md5(senha), data_nascimento, tipo, cpf, cidade, estado, cro});
+    // Criar objeto com os dados do usuário
+    const newUser = {
+      ...userData,
+      senha: md5(userData.senha), // Criptografar a senha
+      avatar: null // Inicializar o avatar como null
+    };
+
+    console.log("Dados do usuário antes de salvar:", newUser);
+    
+    // Salvar no banco de dados
+    const createdUser = await this.userRepository.createUser(newUser);
+    console.log("Usuário criado:", createdUser);
+    
+    return createdUser;
   }
 
-  async updateUser(id, updates) {
-    if (!id) {
-      throw new Error("O ID do usuário é obrigatório.");
+  async updateUser(id, userData) {
+    // Se houver senha, criptografar
+    if (userData.senha) {
+      userData.senha = md5(userData.senha);
     }
-  
-    if (updates.senha) {
-      // Criptografar a senha antes de atualizar
-      updates.senha = md5(updates.senha);
-    }
-  
-    return await this.userRepository.updateUser(id, updates);
+    return await this.userRepository.updateUser(id, userData);
   }
 
   async deleteUser(id) {
-    if (!id) {
-      throw new Error("O ID do usuário é obrigatório.");
-    }
-  
     return await this.userRepository.deleteUser(id);
   }
-  
-  
+
+  async findById(id) {
+    return await this.userRepository.findById(id);
+  }
 }
 
 module.exports = UserService;

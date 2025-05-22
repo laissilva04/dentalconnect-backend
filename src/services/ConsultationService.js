@@ -15,6 +15,18 @@ class ConsultationService {
   }
 
   /**
+   * Busca consultas por paciente.
+   * @param {number} pacienteId
+   * @returns {Array<Consultation>}
+   */
+  async findConsultationsByPaciente(pacienteId) {
+    if (!pacienteId) {
+      throw new Error('O ID do paciente é obrigatório.');
+    }
+    return await this.consultationRepository.findByPaciente(pacienteId);
+  }
+
+  /**
    * Cria uma nova consulta.
    * @param {Object} consultation
    */

@@ -13,6 +13,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Rota para buscar consultas por paciente
+router.get('/paciente/:pacienteId', async (req, res) => {
+  try {
+    const consultas = await consultationService.findConsultationsByPaciente(req.params.pacienteId);
+    res.status(200).json(consultas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Rota para criar uma nova consulta
 router.post('/', async (req, res) => {
   console.log('Dados recebidos na rota:', req.body); // Log dos dados recebidos
