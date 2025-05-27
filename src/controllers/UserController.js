@@ -4,8 +4,33 @@ const router = express.Router();
 const userService = new UserService();
 const authentication  = require('../middleware/authentication.midle');
 const UserRepository = require('../repositories/UserRepository');
+const { createClient } = require('@supabase/supabase-js');
+const multer = require('multer');
+const path = require('path');
 
 const userRepository = new UserRepository();
+
+// Configuração do Supabase
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Configuração do Multer para upload de arquivos
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // limite de 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Tipo de arquivo não suportado. Use apenas JPEG, PNG ou GIF.'));
+    }
+  },
+});
 
 // Rota para listar todos os usuários
 router.get('/', async (req, res) => {
@@ -87,6 +112,78 @@ router.get('/:id', async (req, res) => {
     return res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error('Erro ao buscar usuário:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// Upload de avatar
+router.post('/:id/avatar', authentication, upload.single('avatar'), async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const file = req.file;
+
+    console.log('Dados da requisição:', {
+      userId,
+      userFromToken: req.user,
+      file: file ? {
+        originalname: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size
+      } : null
+    });
+
+    if (!file) {
+      return res.status(400).json({ message: 'Nenhum arquivo enviado' });
+    }
+
+    // Verificar se o usuário está tentando atualizar seu próprio avatar
+    const tokenUserId = req.user.userId;
+    console.log('Comparando IDs:', {
+      tokenUserId: tokenUserId,
+      tokenUserIdType: typeof tokenUserId,
+      userId: userId,
+      userIdType: typeof userId
+    });
+
+    if (String(tokenUserId) !== String(userId)) {
+      console.log('IDs não correspondem:', {
+        userIdFromToken: tokenUserId,
+        userIdFromParams: userId
+      });
+      return res.status(403).json({ message: 'Não autorizado a atualizar avatar de outro usuário' });
+    }
+
+    // Gerar nome único para o arquivo
+    const fileExt = path.extname(file.originalname);
+    const fileName = `${userId}-${Date.now()}${fileExt}`;
+
+    // Upload para o Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true
+      });
+
+    if (error) {
+      console.error('Erro ao fazer upload para o Supabase:', error);
+      return res.status(500).json({ message: 'Erro ao fazer upload da imagem' });
+    }
+
+    // Obter URL pública da imagem
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(fileName);
+
+    // Atualizar o avatar do usuário no banco de dados
+    await userRepository.updateUser(userId, { avatar: publicUrl });
+
+    return res.status(200).json({
+      message: 'Avatar atualizado com sucesso',
+      avatarUrl: publicUrl
+    });
+  } catch (error) {
+    console.error('Erro ao processar upload do avatar:', error);
     return res.status(500).json({ message: 'Erro interno do servidor' });
   }
 });
