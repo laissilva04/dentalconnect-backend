@@ -27,8 +27,11 @@ const mailRoutes = require('./src/routes/mail');
 const localServicosController = require('./src/controllers/LocalServicesController')
 const faleConoscoController = require('./src/controllers/FaleConoscoController');
 const dentistaServicoController = require('./src/controllers/DentistaServicoController');
+const ConsultaController = require('/src/controllers/ConsultaController');
+
 
 // Conexão das rotas
+app.use('/api/consulta', ConsultaController)
 app.use('/api/users', userController)
 app.use('/api/login', authController)
 app.use('/api/locals', localController)
