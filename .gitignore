@@ -16,3 +16,4 @@ build/
 # Sistema operacional (opcional)
 .DS_Store
 Thumbs.db
+backup_scripts/
