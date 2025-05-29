@@ -51,7 +51,7 @@ const supabase = createClient(
             .from('user')
             .insert([userData])
             .select()
-            .single();
+            .maybeSingle();
         
         if (error) {
             console.error("Erro ao criar usuário no Supabase:", error);
@@ -73,7 +73,7 @@ const supabase = createClient(
             .from('user')
             .select('*')
             .eq('email', email)
-            .single();
+            .maybeSingle();
         
         if (error) {
             console.error("Erro ao buscar usuário por email no Supabase:", error);
