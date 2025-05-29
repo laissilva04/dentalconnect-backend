@@ -45,7 +45,7 @@ class AuthService{
         const tokenPayload = { userId };
         console.log('Payload do token:', tokenPayload);
         
-        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
         console.log('Token gerado:', token);
 
         // Garantir que o avatar seja uma string ou null
