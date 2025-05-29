@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
   const { data, horario, paciente, dentista, local, status,servico } = req.body;
 
   // Validação dos dados recebidos
-  if (!data || !horario || !paciente || !dentista || !local || !status || !servico) {
+  if (!data || !horario || !paciente || !dentista || !local || !status) {
     console.error('Dados inválidos:', { data, horario, paciente, dentista, local, status, servico});
     return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
   }
