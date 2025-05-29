@@ -45,6 +45,11 @@ class ConsultationRepository {
                         nome,
                         email,
                         avatar
+                    ),
+                    servico:servicos!consulta_servico_fkey (
+                        id,
+                        nome,
+                        descricao
                     )
                 `)
                 .eq('paciente', pacienteId)

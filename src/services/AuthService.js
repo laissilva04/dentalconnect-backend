@@ -38,11 +38,15 @@ class AuthService{
             throw new Error('Credenciais inválidas.');
         }
 
-        // Gerar um token JWT
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
         // Garantir que o ID seja uma string
         const userId = String(user.id);
+
+        // Gerar um token JWT com o ID do usuário
+        const tokenPayload = { userId };
+        console.log('Payload do token:', tokenPayload);
+        
+        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+        console.log('Token gerado:', token);
 
         // Garantir que o avatar seja uma string ou null
         const userAvatar = user.avatar || null;
