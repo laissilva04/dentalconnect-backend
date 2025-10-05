@@ -55,6 +55,9 @@ app.get("/", (req, res) => {
 
 // Inicia o servidor na porta 3001
 const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Servidor na porta http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Acesse via: http://localhost:${PORT}`);
+  console.log(`Acesse via: http://192.168.0.10:${PORT}`);
+  console.log(`Servidor configurado para aceitar conexões de qualquer IP`);
 });

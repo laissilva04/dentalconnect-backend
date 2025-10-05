@@ -7,7 +7,9 @@ const router = express.Router();
 
 //Rota de Login 
 router.post('/', async (req, res) => {
-  
+    console.log('Requisição de login recebida:', req.body);
+    console.log('Headers:', req.headers);
+    
     const { email, senha } = req.body;
     
     try {
