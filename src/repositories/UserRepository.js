@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
@@ -68,6 +69,11 @@ const supabase = createClient(
      * @returns {Object|null} 
      */
     async findByEmail(email) {
+        console.log({
+            url:    process.env.SUPABASE_URL,
+            key:    process.env.SUPABASE_KEY
+        })
+        
         console.log("Buscando usuário no Supabase com email:", email);
         const { data, error } = await supabase
             .from('user')
