@@ -34,7 +34,7 @@ class ConsultationService {
     const { data, horario, paciente, dentista, local, status, servico } = consultation;
 
     // Validação dos dados
-    if (!data || !horario || !paciente || !dentista || !local || !status) {
+    if (!data || !horario || !paciente || !local || !status) {
       throw new Error('Todos os campos são obrigatórios.');
     }
 

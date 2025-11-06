@@ -26,12 +26,12 @@ router.get('/paciente/:pacienteId', async (req, res) => {
 // Rota para criar uma nova consulta
 router.post('/', async (req, res) => {
   console.log('Dados recebidos na rota:', req.body); // Log dos dados recebidos
-  const { data, horario, paciente, dentista, local, status,servico } = req.body;
+  const { data, horario, paciente, dentista, local, status, servico } = req.body;
 
   // Validação dos dados recebidos
-  if (!data || !horario || !paciente || !dentista || !local || !status) {
-    console.error('Dados inválidos:', { data, horario, paciente, dentista, local, status, servico});
-    return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+  if (!data || !horario || !paciente || !local) {
+        console.error('Dados inválidos:', { data, horario, paciente, local});
+        return res.status(400).json({ error: 'Os campos data, horário, paciente e local são obrigatórios.' });
   }
 
   try {
