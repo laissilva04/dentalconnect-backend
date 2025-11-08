@@ -1,5 +1,6 @@
 const UserRepository = require('../repositories/UserRepository')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const md5 = require('md5')
 
 class AuthService{
@@ -29,11 +30,25 @@ class AuthService{
             email: user.email,
             avatar: user.avatar,
             tipo: user.tipo,
-            senhaHash: user.senha,
-            senhaFornecidaHash: md5(senha)
+            senhaHash: user.senha
         });
   
-        if(user.senha !== md5(senha)) {
+        // Verificar se a senha é bcrypt (começa com $2a$, $2b$ ou $2y$)
+        const isBcrypt = user.senha && (user.senha.startsWith('$2a$') || user.senha.startsWith('$2b$') || user.senha.startsWith('$2y$'));
+        
+        let senhaValida = false;
+        
+        if (isBcrypt) {
+            // Comparar usando bcrypt
+            senhaValida = await bcrypt.compare(senha, user.senha);
+            console.log("Comparação bcrypt:", senhaValida);
+        } else {
+            // Comparar usando MD5 (para compatibilidade com senhas antigas)
+            senhaValida = user.senha === md5(senha);
+            console.log("Comparação MD5:", senhaValida);
+        }
+        
+        if (!senhaValida) {
             console.log("Senha incorreta");
             throw new Error('Credenciais inválidas.');
         }

@@ -1,5 +1,5 @@
 const UserRepository = require('../repositories/UserRepository');
-const md5 = require('md5');
+const bcrypt = require('bcryptjs');
 
 class UserService {
   constructor() {
@@ -28,14 +28,17 @@ class UserService {
       throw new Error('Email já cadastrado');
     }
 
+    // Criptografar a senha usando bcrypt
+    const senhaHash = await bcrypt.hash(userData.senha, 12);
+
     // Criar objeto com os dados do usuário
     const newUser = {
       ...userData,
-      senha: md5(userData.senha), // Criptografar a senha
+      senha: senhaHash, // Criptografar a senha com bcrypt
       avatar: null // Inicializar o avatar como null
     };
 
-    console.log("Dados do usuário antes de salvar:", newUser);
+    console.log("Dados do usuário antes de salvar:", { ...newUser, senha: '[HASHED]' });
     
     // Salvar no banco de dados
     const createdUser = await this.userRepository.createUser(newUser);
@@ -45,9 +48,9 @@ class UserService {
   }
 
   async updateUser(id, userData) {
-    // Se houver senha, criptografar
+    // Se houver senha, criptografar com bcrypt
     if (userData.senha) {
-      userData.senha = md5(userData.senha);
+      userData.senha = await bcrypt.hash(userData.senha, 12);
     }
     return await this.userRepository.updateUser(id, userData);
   }
