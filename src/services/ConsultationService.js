@@ -85,6 +85,24 @@ class ConsultationService {
 
     return await this.consultationRepository.findById(id);
   }
+
+  /**
+   * Busca consultas por paciente (alias para findConsultationsByPaciente).
+   * @param {string} pacienteId
+   * @returns {Array<Object>}
+   */
+  async getConsultationsByPatient(pacienteId) {
+    return await this.findConsultationsByPaciente(pacienteId);
+  }
+
+  /**
+   * Busca uma consulta pelo ID (alias para findConsultaById).
+   * @param {number} id
+   * @returns {Object|null}
+   */
+  async findConsultationById(id) {
+    return await this.findConsultaById(id);
+  }
 }
 
 module.exports = ConsultationService;
